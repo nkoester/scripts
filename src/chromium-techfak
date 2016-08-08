@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [ $# -eq 1 ] ; then
+    NEW_UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    PROFILE_PATH="/tmp/$NEW_UUID"
+    mkdir -p $PROFILE_PATH
+    echo "will spawn temporary session at $PROFILE_PATH ..."
+fi
+
+
+unset http_proxy
+unset ftp_proxy
+unset https_proxy
+
+
+if [[ -d $PROFILE_PATH ]] ; then
+    echo "calling screen -d -m -t CHROMIUM chromium-browser --user-data-dir=$PROFILE_PATH --disk-cache-dir=$PROFILE_PATH"
+    screen -d -m -S CHROMIUM-TMP-SESSION chromium-browser --user-data-dir=$PROFILE_PATH --disk-cache-dir=$PROFILE_PATH
+else
+    if [[ -d "/media/local_data/nkoester/tmp/" ]] ; then
+        echo "Using media local tmp cache..."
+        screen -d -m -S CHROMIUM-LOCAL chromium-browser --disk-cache-dir=/media/local_data/nkoester/tmp
+    else
+        echo "Using tmp cache..."i
+        mkdir -p /tmp/chromium-cache
+        screen -d -m -S CHROMIUM-TMP chromium-browser --disk-cache-dir=/tmp/chromium-cache
+    fi
+fi
+
