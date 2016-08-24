@@ -5,6 +5,7 @@ if [ $# -eq 1 ] ; then
     PROFILE_PATH="/tmp/$NEW_UUID"
     mkdir -p $PROFILE_PATH
     echo "will spawn temporary session at $PROFILE_PATH ..."
+    tar -xzf ~/local/share/chromium_tmp_profile.tar.gz -C $PROFILE_PATH
 fi
 
 
