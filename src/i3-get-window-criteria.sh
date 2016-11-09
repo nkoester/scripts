@@ -11,6 +11,13 @@
 
 PROGNAME=`basename "$0"`
 
+
+
+
+
+
+
+
 # Check for xwininfo and xprop
 for cmd in xwininfo xprop; do
     if ! which $cmd > /dev/null 2>&1; then
