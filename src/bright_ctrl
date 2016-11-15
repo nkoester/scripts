@@ -1,0 +1,27 @@
+#!/bin/bash
+
+cur_val=$(cat /sys/class/backlight/intel_backlight/brightness)
+max_val=$(cat /sys/class/backlight/intel_backlight/max_brightness)
+
+#step_size="9.37"
+step_size=$(echo 5*$max_val/100 | bc)
+
+#echo "input: $cur_val // $max_val // $step_size // $1"
+
+if [ "$1" == "+" ]; then
+    next_val=$( echo $cur_val+$step_size | bc | cut -d "." -f 1 )
+elif [ "$1" == "-" ]; then
+    next_val=$( echo $cur_val-$step_size | bc | cut -d "." -f 1 )
+else
+    echo "Unknown argument: use +/-"
+    exit 1
+fi 
+
+if [[ $next_val -eq 0 ]]; then
+    next_val=1
+elif [[ $next_val -gt $max_val ]]; then
+    next_val=$max_val
+fi
+
+echo $next_val | sudo tee /sys/class/backlight/intel_backlight/brightness
+notify-send.sh --replace=2 -t 1 --print-id "Brightness" "$next_val / $max_val"
