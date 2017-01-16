@@ -8,14 +8,17 @@ step_size=$(echo 5*$max_val/100 | bc)
 
 #echo "input: $cur_val // $max_val // $step_size // $1"
 
-if [ "$1" == "+" ]; then
+if [[ $1 =~ ^[0-9]+$ ]] ; then
+    next_val=$1
+    echo "Will set brightness to $1"
+elif [ "$1" == "+" ]; then
     next_val=$( echo $cur_val+$step_size | bc | cut -d "." -f 1 )
 elif [ "$1" == "-" ]; then
     next_val=$( echo $cur_val-$step_size | bc | cut -d "." -f 1 )
 else
-    echo "Unknown argument: use +/-"
+    echo "Unknown argument: use [INT] / + / -"
     exit 1
-fi 
+fi
 
 if [[ $next_val -eq 0 ]]; then
     next_val=1
