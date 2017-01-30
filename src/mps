@@ -1,0 +1,36 @@
+#/bin/bash
+
+echo "Setting java JVM settings ..."
+
+export ADDITIONAL_JVM_ARGS="-Dswing.aatext=TRUE -Dawt.useSystemAAFontSettings=on -Xms2048m -Xmx4048m -XX:PermSize=512m -XX:MaxPermSize=2048m"
+
+
+if [[ -z $1 ]]; then
+    echo "No version given. Usage mps.sh [VERSION]"
+
+    echo "Possible versions: "
+    find /vol/mps/ -maxdepth 1 -type d -printf "%f\n" | grep MPS- | cut -c 5-
+else
+
+    if [ "$1" == "latest" ]; then
+        latest=$(find /vol/mps/ -maxdepth 1 -type d -printf "%f\n" | grep MPS- | cut -c 5- | tail -n 1)
+        echo "Latest MPS is $latest"
+        cd /vol/mps/MPS-$latest/bin
+        echo "Run dos Run."
+        echo `pwd`
+        set -x
+        screen -S MPS-$latest -d -m ./mps.sh
+    elif [ -d "/vol/mps/MPS-$1/bin" ]; then
+    # Control will enter here if $DIRECTORY exists.
+        cd /vol/mps/MPS-$1/bin
+        echo "Run dos Run."
+        echo `pwd`
+        set -x
+        screen -t mps$1 -d -m ./mps.sh
+    else
+        echo "MPS Version not found! Possible versions are: "
+        echo ""
+        find /vol/mps/ -maxdepth 1 -type d -printf "%f\n" | grep MPS- | cut -c 5-
+    fi
+fi
+
