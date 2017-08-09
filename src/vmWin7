@@ -1,3 +1,5 @@
 qemu-system-x86_64 --enable-kvm -drive file=/vol/vm/win/win7-64.img,format=raw -m 4048 -net nic,model=virtio -net user,smb=/vol/vm/shared -rtc base=localtime,clock=host -smp cores=2,threads=4 -usbdevice tablet -soundhw hda -cpu host -vga qxl -device qxl -spice unix,addr=/tmp/vm_spice_win7.socket,disable-ticketing,playback-compression=off -device virtio-serial -chardev spicevmc,id=vdagent,name=vdagent -device virtserialport,chardev=vdagent,name=com.redhat.spice.0 -pidfile /tmp/vm-win7&
 
-spicy --uri="spice+unix:///tmp/vm_spice_win7.socket"
+sleep 1
+
+remote-viewer spice+unix:///tmp/vm_spice_win7.socket

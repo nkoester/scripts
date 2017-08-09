@@ -13,8 +13,10 @@ if [[ -z $1 ]]; then
 else
 
     if [ "$1" == "latest" ]; then
-        latest=$(find /vol/mps/ -maxdepth 1 -type d -printf "%f\n" | grep MPS- | cut -c 5- | tail -n 1)
+        #latest=$(find /vol/mps/ -maxdepth 1 -type d -printf '%p\n' | tail -n 1)
+        latest=$(ls -ahl /vol/mps/ | grep MPS | tail -n 1 | cut -d " " -f 9 | cut -c 5-)
         echo "Latest MPS is $latest"
+        #cd ${latest}/bin
         cd /vol/mps/MPS-$latest/bin
         echo "Run dos Run."
         echo `pwd`
