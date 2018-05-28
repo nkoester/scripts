@@ -6,33 +6,45 @@ export ADDITIONAL_JVM_ARGS="-Dswing.aatext=TRUE -Dawt.useSystemAAFontSettings=on
 
 
 if [[ -z $1 ]]; then
-    echo "No version given. Usage mps.sh [VERSION]"
+    echo "No version given. Usage mps.sh [VERSION] [CUSTOM_SETTINGS_PATH(MPS>=2018]"
 
     echo "Possible versions: "
     find /vol/mps/ -maxdepth 1 -type d -printf "%f\n" | grep MPS- | cut -c 5-
 else
-
     if [ "$1" == "latest" ]; then
         #latest=$(find /vol/mps/ -maxdepth 1 -type d -printf '%p\n' | tail -n 1)
-        latest=$(ls -ahl /vol/mps/ | grep MPS | tail -n 1 | cut -d " " -f 9 | cut -c 5-)
+        latest=$(ls -ahl /vol/mps/ | grep MPS-20 | tail -n 1 | cut -d " " -f 9 | cut -c 5-)
         echo "Latest MPS is $latest"
         #cd ${latest}/bin
         cd /vol/mps/MPS-$latest/bin
-        echo "Run dos Run."
-        echo `pwd`
-        set -x
-        screen -S MPS-$latest -d -m ./mps.sh
+        VERSION=$latest
+
     elif [ -d "/vol/mps/MPS-$1/bin" ]; then
     # Control will enter here if $DIRECTORY exists.
         cd /vol/mps/MPS-$1/bin
-        echo "Run dos Run."
-        echo `pwd`
-        set -x
-        screen -t mps$1 -d -m ./mps.sh
+        VERSION=$1
+
     else
         echo "MPS Version not found! Possible versions are: "
         echo ""
         find /vol/mps/ -maxdepth 1 -type d -printf "%f\n" | grep MPS- | cut -c 5-
+        exit 1
     fi
+
+    echo "Run dos Run."
+    echo `pwd`
+
+    SETTINGS_PATH="mps/"
+    if [[ "$#" -gt 1 ]]; then
+        echo "found additional argument - will use as custom settings path:"
+        SETTINGS_PATH="$SETTINGS_PATH/$VERSION--$2"
+    else
+        echo "will use default settings path:"
+        SETTINGS_PATH="$SETTINGS_PATH/$VERSION"
+    fi
+
+    set -x
+    export IDEA_PATHS_SELECTOR="$SETTINGS_PATH"
+    screen -t mps$VERSION -d -m ./mps.sh
 fi
 
