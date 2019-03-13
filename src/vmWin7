@@ -2,4 +2,4 @@ qemu-system-x86_64 --enable-kvm -drive file=/vol/vm/win/win7-64.img,format=raw -
 
 sleep 1
 
-remote-viewer spice+unix:///tmp/vm_spice_win7.socket
+SPICE_NOGRAB=1 remote-viewer spice+unix:///tmp/vm_spice_win7.socket

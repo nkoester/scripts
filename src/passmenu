@@ -13,13 +13,13 @@ password_files=( "$prefix"/**/*.gpg )
 password_files=( "${password_files[@]#"$prefix"/}" )
 password_files=( "${password_files[@]%.gpg}" )
 
-password=$(printf '%s\n' "${password_files[@]}" | dmenu "$@")
+password=$(printf '%s\n' "${password_files[@]}" | rofi -dmenu -location 6 -lines 5 -disable-history -width 60 -line-margin 0 -line-padding 1 -columns 1 -hide-scrollbar -kb-row-select "Tab" -kb-row-tab "" -theme-str "")
+# password=$(printf '%s\n' "${password_files[@]}" | dmenu "$@")
 
 [[ -n $password ]] || exit
 
 if [[ $typeit -eq 0 ]]; then
 	pass show -c "$password" 2>/dev/null
 else
-	pass show "$password" | { read -r pass; printf %s "$pass"; } |
-		xdotool type --clearmodifiers --file -
+	pass show "$password" | { read -r pass; printf %s "$pass"; } | xdotool type --clearmodifiers --file -
 fi

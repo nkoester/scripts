@@ -1,0 +1,32 @@
+#!/bin/bash
+# lisp magic taken from http://billauer.co.il/blog/2009/07/gimp-xcf-jpg-jpeg-convert-bash-script/
+# you are a legend. THANKS!
+
+if [ $# -ne 2 ]; then
+    echo $0: usage: xcf2png INPUT_FILE OUTPUT_FILE
+    exit 1
+fi
+
+{
+cat <<EOF
+(define (convert-xcf-to-png filename outfile)
+  (let* (
+     (image (car (gimp-file-load RUN-NONINTERACTIVE filename filename)))
+     (drawable (car (gimp-image-merge-visible-layers image CLIP-TO-IMAGE)))
+     )
+    ; alternative for jpg generation
+    ;(file-jpeg-save RUN-NONINTERACTIVE image drawable outfile outfile .9 0 0 0 " " 0 1 0 1)
+    (file-png-save RUN-NONINTERACTIVE image drawable outfile outfile 0 9 1 0 0 1 1)
+    (gimp-image-delete image) ; ... or the memory will explode
+    )
+)
+
+(gimp-message-set-handler 1) ; Messages to standard output
+EOF
+
+# echo "(gimp-message \"$1\")"
+echo "(convert-xcf-to-png \"$1\" \"$2\")"
+
+echo "(gimp-quit 0)"
+} | gimp -i -b -
+
