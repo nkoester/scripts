@@ -7,6 +7,11 @@ if [[ $1 == "--type" ]]; then
 	typeit=1
 	shift
 fi
+delaytime=0
+if [[ $1 == "--delay" ]]; then
+	delaytime=2
+	shift
+fi
 
 prefix=${PASSWORD_STORE_DIR-~/.password-store}
 password_files=( "$prefix"/**/*.gpg )
@@ -19,7 +24,7 @@ password=$(printf '%s\n' "${password_files[@]}" | rofi -dmenu -location 6 -lines
 [[ -n $password ]] || exit
 
 if [[ $typeit -eq 0 ]]; then
-	pass show -c "$password" 2>/dev/null
+	sleep $delaytime && pass show -c "$password" 2>/dev/null
 else
-	pass show "$password" | { read -r pass; printf %s "$pass"; } | xdotool type --clearmodifiers --file -
+	sleep $delaytime && pass show "$password" | { read -r pass; printf %s "$pass"; } | xdotool type --clearmodifiers --file -
 fi
