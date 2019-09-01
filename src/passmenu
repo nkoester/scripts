@@ -4,16 +4,21 @@ shopt -s nullglob globstar
 
 typeit=0
 if [[ $1 == "--type" ]]; then
-	typeit=1
-	shift
+    typeit=1
+    shift
+fi
+delaytime=0
+if [[ $1 == "--delay" ]]; then
+    delaytime=2
+    shift
 fi
 
 slow=""
 slowtext=""
 if [[ $1 == "--slow" ]]; then
-	slow="--delay 100"
+    slow="--delay 100"
     slowtext=" (slow)"
-	shift
+    shift
 fi
 
 
@@ -30,7 +35,8 @@ password=$(printf '%s\n' "${password_files[@]}" | rofi -dmenu -location 6 -lines
 
 
 if [[ $typeit -eq 0 ]]; then
-	pass show -c "$password" 2>/dev/null
+    sleep $delaytime && pass show -c "$password" 2>/dev/null
 else
-	pass show "$password" | { read -r pass; printf %s "$pass"; } | xdotool type $slow --clearmodifiers --file -
+    # pass show "$password" | { read -r pass; printf %s "$pass"; } | xdotool type $slow --clearmodifiers --file -
+    sleep $delaytime && pass show "$password" | { read -r pass; printf %s "$pass"; } | xdotool type --clearmodifiers --file -
 fi
